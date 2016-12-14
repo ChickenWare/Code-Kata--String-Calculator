@@ -15,7 +15,7 @@ namespace DGO.StringCalculatorKata
 
         public int Add(string numbers)
         {
-            return new int();
+            return 0;
         }
     }
 }
