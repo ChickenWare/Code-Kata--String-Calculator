@@ -35,8 +35,6 @@ namespace DGO.StringCalculatorKata
             return result;
         }
 
-
-
         private bool HasOnlyPositiveValues(int[] numbersToSum)
         {
             int[] negativeNumbersFromArray = numbersToSum.Where(x => x < 0).ToArray();
