@@ -107,6 +107,22 @@ namespace DGO.TestsStringCalculatorKata
         {
             string input = "//;\n1;2;-5;2;-8";
             StringCalculator.Add(input);
+        }
+
+        [TestMethod]
+        public void Test_Add_IgnoreNumberAbove1000_SumOfPositiveNumbersBelow1000()
+        {
+            string input = "//;\n1;2;1001";
+            int expected = 3;
+            Assert.AreEqual(expected, StringCalculator.Add(input));  
+        } 
+
+        [TestMethod]
+        public void Test_Add_MultipleCharDelimiter_SumOfNumbers()
+        {
+            string input = "//[***]\n1***2***3";
+            int expected = 6;
+            Assert.AreEqual(expected, StringCalculator.Add(input));  
         } 
         #endregion
         
