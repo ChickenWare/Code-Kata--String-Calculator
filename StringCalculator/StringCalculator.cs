@@ -9,12 +9,16 @@ namespace DGO.StringCalculatorKata
 {
     public class StringCalculator
     {
-        private char[] _supportedDelimiters = {',','\n' }; 
+        private List<string> _supportedDelimiters; 
         public void Dispose()
         {
             GC.SuppressFinalize(this);
         }
 
+        public StringCalculator()
+        {
+            _supportedDelimiters = new List<string>();
+        }
         public int Add(string numbers)
         {
             int result = 0;
@@ -22,9 +26,11 @@ namespace DGO.StringCalculatorKata
 
             if (IsHeaderPresent(numbers))
             {
-                _supportedDelimiters = GetDelimitersFromHeader(numbers);
+                GetDelimitersFromHeader(numbers);
                 numbers = RemoveHeader(numbers);
             }
+            else
+                UseDefaultDelimiters();
 
             int[] numbersToSum = GetNumbersFromDelimitersBasedString(numbers);
 
@@ -34,6 +40,12 @@ namespace DGO.StringCalculatorKata
             }
             
             return result;
+        }
+
+        private void UseDefaultDelimiters()
+        {
+            _supportedDelimiters.Add(",");
+            _supportedDelimiters.Add("\n");
         }
 
         private bool HasOnlyPositiveValues(int[] numbersToSum)
@@ -58,7 +70,7 @@ namespace DGO.StringCalculatorKata
         
         public string[] SplitString(string stringToSplit)
         {
-            return stringToSplit.Split(_supportedDelimiters);
+            return stringToSplit.Split(_supportedDelimiters.ToArray(),StringSplitOptions.RemoveEmptyEntries);
         }
 
         public bool IsHeaderPresent(string numbers)
@@ -70,9 +82,9 @@ namespace DGO.StringCalculatorKata
             return false;
         }
 
-        public char[] GetDelimitersFromHeader(string numbers) 
+        public void GetDelimitersFromHeader(string numbers) 
         {
-            return new char[1]{numbers[2]};
+            _supportedDelimiters.Add(numbers[2].ToString());
         }
 
         public string RemoveHeader(string numbers)
