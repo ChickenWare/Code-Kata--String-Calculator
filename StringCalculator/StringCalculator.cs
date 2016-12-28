@@ -25,10 +25,14 @@ namespace DGO.StringCalculatorKata
             int result = 0;
             if (string.IsNullOrEmpty(numbers)) { return 0; }
 
+            string header = string.Empty;
+
             if (IsHeaderPresent(numbers))
             {
-                int endOfHeaderIndex = GetDelimitersFromHeader_Extended(numbers);
-                numbers = RemoveHeader(numbers, endOfHeaderIndex);
+                int endOfHeaderIndex = GetIndexOfFirstNumber(numbers);
+                header = numbers.Substring(0, endOfHeaderIndex);
+                numbers = numbers.Substring(endOfHeaderIndex);
+                GetDelimitersFromHeader_recursiv(header);
             }
             else
                 UseDefaultDelimiters();
@@ -39,8 +43,42 @@ namespace DGO.StringCalculatorKata
             {
                 result = SumIntArray(numbersToSum);
             }
-            
             return result;
+        }
+
+        private void GetDelimitersFromHeader_recursiv(string header)
+        {
+            if (header.StartsWith("//"))
+            {
+                header = header.Remove(0, 2);
+            }
+
+            if ('[' == header[0])
+            {
+                header = header.Remove(0, 1);
+                //Brackets delimited delimiters
+                bool continueLookingForHeaders = true;
+                while (continueLookingForHeaders)
+                {
+                    int nextDelimiterIndex = header.IndexOf("][");
+                    int endOfHeader = header.IndexOf("]\n");
+
+                    if (nextDelimiterIndex > 0)
+                    {
+                        _supportedDelimiters.Add(header.Substring(0, nextDelimiterIndex));
+                        header = header.Remove(0, nextDelimiterIndex + 1);
+                    }
+                    else
+                    {
+                        _supportedDelimiters.Add(header.Substring(0, endOfHeader));
+                        continueLookingForHeaders = false;
+                    }
+                }
+            }
+            else 
+            {
+                _supportedDelimiters.Add(header[0].ToString());
+            }
         }
 
         private void UseDefaultDelimiters()
@@ -83,49 +121,12 @@ namespace DGO.StringCalculatorKata
             return false;
         }
 
-        public void GetDelimitersFromHeader(string numbers) 
+        public int GetIndexOfFirstNumber(string numbers)
         {
-            _supportedDelimiters.Add(numbers[2].ToString());
-        }
+            Regex regex = new Regex(@"\d+");
+            Match match = regex.Match(numbers);
 
-        public int GetDelimitersFromHeader_Extended(string numbers)
-        {
-            int index = 2;
-            int delimiterStart = 0;
-            int delimiterLength = 1;
-
-            if (numbers[index] != '[' & numbers[index + 1] == '\n')
-            {
-                //Single delimiter not encapsulated
-                _supportedDelimiters.Add(numbers[index].ToString());
-            }
-            else
-            {
-                string delimiter = string.Empty;
-
-                if (numbers[index] == '[')
-                {
-                    index++;
-                    delimiterStart = index;
-                    while ((delimiterStart + delimiterLength < numbers.Length) && numbers[delimiterStart + delimiterLength] != ']')
-                    {
-                        delimiterLength++;
-                    }
-                    delimiter = numbers.Substring(delimiterStart, delimiterLength);
-                    _supportedDelimiters.Add(delimiter);
-                }
-                else 
-                {
-                    throw new Exception("Invalid header.");
-                }
-            }
-
-            return (index + delimiterLength + 1);
-        }
-
-        public string RemoveHeader(string numbers, int headerLength = 4)
-        {
-            return numbers.Remove(0, headerLength);
+            return match.Index;
         }
 
         public int[] GetNumbersFromDelimitersBasedString(string numbers)
