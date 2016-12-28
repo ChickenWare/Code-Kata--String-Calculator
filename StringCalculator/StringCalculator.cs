@@ -66,7 +66,7 @@ namespace DGO.StringCalculatorKata
                     if (nextDelimiterIndex > 0)
                     {
                         _supportedDelimiters.Add(header.Substring(0, nextDelimiterIndex));
-                        header = header.Remove(0, nextDelimiterIndex + 1);
+                        header = header.Remove(0, nextDelimiterIndex + 2);
                     }
                     else
                     {
