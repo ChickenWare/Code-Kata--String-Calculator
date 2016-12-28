@@ -19,6 +19,7 @@ namespace DGO.StringCalculatorKata
         {
             _supportedDelimiters = new List<string>();
         }
+
         public int Add(string numbers)
         {
             int result = 0;
@@ -26,8 +27,8 @@ namespace DGO.StringCalculatorKata
 
             if (IsHeaderPresent(numbers))
             {
-                GetDelimitersFromHeader(numbers);
-                numbers = RemoveHeader(numbers);
+                int endOfHeaderIndex = GetDelimitersFromHeader_Extended(numbers);
+                numbers = RemoveHeader(numbers, endOfHeaderIndex);
             }
             else
                 UseDefaultDelimiters();
@@ -87,9 +88,44 @@ namespace DGO.StringCalculatorKata
             _supportedDelimiters.Add(numbers[2].ToString());
         }
 
-        public string RemoveHeader(string numbers)
+        public int GetDelimitersFromHeader_Extended(string numbers)
         {
-            return numbers.Remove(0, 4);
+            int index = 2;
+            int delimiterStart = 0;
+            int delimiterLength = 1;
+
+            if (numbers[index] != '[' & numbers[index + 1] == '\n')
+            {
+                //Single delimiter not encapsulated
+                _supportedDelimiters.Add(numbers[index].ToString());
+            }
+            else
+            {
+                string delimiter = string.Empty;
+
+                if (numbers[index] == '[')
+                {
+                    index++;
+                    delimiterStart = index;
+                    while ((delimiterStart + delimiterLength < numbers.Length) && numbers[delimiterStart + delimiterLength] != ']')
+                    {
+                        delimiterLength++;
+                    }
+                    delimiter = numbers.Substring(delimiterStart, delimiterLength);
+                    _supportedDelimiters.Add(delimiter);
+                }
+                else 
+                {
+                    throw new Exception("Invalid header.");
+                }
+            }
+
+            return (index + delimiterLength + 1);
+        }
+
+        public string RemoveHeader(string numbers, int headerLength = 4)
+        {
+            return numbers.Remove(0, headerLength);
         }
 
         public int[] GetNumbersFromDelimitersBasedString(string numbers)

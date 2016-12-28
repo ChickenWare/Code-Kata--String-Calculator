@@ -115,15 +115,15 @@ namespace DGO.TestsStringCalculatorKata
             string input = "//;\n1;2;1001";
             int expected = 3;
             Assert.AreEqual(expected, StringCalculator.Add(input));  
-        } 
+        }
 
-        //[TestMethod]
-        //public void Test_Add_MultipleCharDelimiter_SumOfNumbers()
-        //{
-        //    string input = "//[***]\n1***2***3";
-        //    int expected = 6;
-        //    Assert.AreEqual(expected, StringCalculator.Add(input));  
-        //}
+        [TestMethod]
+        public void Test_Add_MultipleCharDelimiter_SumOfNumbers()
+        {
+            string input = "//[***]\n1***2***3";
+            int expected = 6;
+            Assert.AreEqual(expected, StringCalculator.Add(input));
+        }
 
         //[TestMethod]
         //public void Test_Add_SpecialCaseMultipleCharDelimiter_SumOfNumbers()
